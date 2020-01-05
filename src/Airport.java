@@ -53,7 +53,16 @@ public class Airport {
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            String[] splitLine = line.replace("\"", "").split(","); // TODO: fix split where , i legitimate e.g. airportID 641
+            System.out.println(line); // TODO: DELETE
+            String[] splitLine = line.replace("\"", "").split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // TODO: fix split where , i legitimate e.g. airportID 641
+
+
+            if (splitLine.length > 14) {
+                splitLine = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                for (int i = 0; i < splitLine.length; i++) {
+                    splitLine[i] = splitLine[i].replace("\"", "");
+                }
+            }
             airports.add(new Airport(Integer.parseInt(splitLine[0]), splitLine[1], splitLine[2],
                 splitLine[3], splitLine[4], splitLine[5], Double.parseDouble(splitLine[6]),
                 Double.parseDouble(splitLine[7]), Integer.parseInt(splitLine[8]),
