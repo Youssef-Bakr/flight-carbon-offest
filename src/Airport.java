@@ -15,6 +15,7 @@ public class Airport {
     // private String databaseTimeZone; // Database time zone. Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
     private String type;                // Type of the airport. Value "airport" for air terminals, "station" for train stations, "port" for ferry terminals and "unknown" if not known. In airports.csv, only type=airport is included.
     private String source;              // Source of this data. "OurAirports" for data sourced from OurAirports, "Legacy" for old data not matched to OurAirports (mostly DAFIF), "User" for unverified user contributions. In airports.csv, only source=OurAirports is included.
+    private String combinedIdentifier;  // A user friendly concatenation of iAtA + name & country variables.
 
     /**
      * Airport constructor.
@@ -44,6 +45,7 @@ public class Airport {
         this.altitude = altitude;
         this.type = type;
         this.source = source;
+        this.combinedIdentifier = iAtA + " " + name + " [" + country + ']';
     }
 
     public int getAirportID() {
@@ -88,6 +90,10 @@ public class Airport {
 
     public String getSource() {
         return source;
+    }
+
+    public String getCombinedIdentifier() {
+        return combinedIdentifier;
     }
 
     /**
