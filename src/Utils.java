@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Utils {
@@ -10,6 +12,14 @@ public class Utils {
     // mean earth radius (in KM) as defined by the International Union of Geodesy and Geophysics
     public static final double EARTH_RADIUS = 6371.0087714150598;
 
+    /**
+     * Utilises OpenFlights data to create an ArrayList containing information related to each
+     * airport as per the Airport class for all current airports available at this URL:
+     * https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
+     *
+     * @return ArrayList<Airport>
+     * @throws IOException
+     */
     public static ArrayList<Airport> generateAirports() throws IOException {
 
         URL url = new URL(
@@ -35,7 +45,6 @@ public class Utils {
                 Double.parseDouble(splitLine[7]), Integer.parseInt(splitLine[8]), splitLine[12],
                 splitLine[13]));
         }
-        scanner.close();
         return airports;
     }
 
@@ -44,11 +53,10 @@ public class Utils {
         ArrayList<Airport> possibleAirports = new ArrayList<>();
         String inputtedString = "";
 
-        Scanner input = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         do {
-            System.out.print(
-                "Enter the name of the airport e.g. Birmingham International Airport or the 3 Letter IATA code e.g. BHX:\n");
-            inputtedString = input.next();
+            System.out.print("Enter the name of the airport e.g. Birmingham International Airport or the 3 Letter IATA code e.g. BHX:\n");
+            inputtedString = scanner.next();
         } while (!inputtedString.chars().allMatch(Character::isLetter));
 
         // 3 is the length of an IATA code
@@ -75,26 +83,28 @@ public class Utils {
         }
 
         if (possibleAirports.size() == 0) {
-            System.out.println("Sorry we could not find any airports matching " + inputtedString + ".");
+            System.out.println("Sorry we could not find any possible matches for " + inputtedString + ".");
             return null;
         } else if (possibleAirports.size() == 1) {
-            System.out.println("Airport found: " + possibleAirports.get(0).toString());
+            System.out.println("Airport found! " + possibleAirports.get(0).toString());
             return possibleAirports.get(0);
         } else {
-            System.out.println("We found multiple airports that matched: " + inputtedString + ". When prompted please enter a valid selection number for the correct airport or if none match please input 999 to terminate the program.");
+            System.out.println("We found multiple airports that matched: " + inputtedString
+                + ". When prompted please enter a valid selection number for the correct airport or if none match please input 999 to terminate the program.");
+            Collections.sort(possibleAirports, Comparator.comparing(Airport::getName));
             for (int i = 0; i < possibleAirports.size(); i++) {
                 System.out.println("Input " + i + " for: " + possibleAirports.get(i).toString());
             }
 
-            int airportSelection = Integer.MIN_VALUE;
+            int airportSelection;
             do {
-                airportSelection = input.nextInt();
-            //} while (!(airportSelection >= 0 && airportSelection <= (possibleAirports.size() - 1)) || airportSelection != 999);
-            } while (!(airportSelection >= 0 && airportSelection <= possibleAirports.size() - 1 || airportSelection == 999));
-            input.close();
+                airportSelection = scanner.nextInt();
+            } while (!(airportSelection >= 0 && airportSelection <= possibleAirports.size() - 1
+                || airportSelection == 999));
+            scanner.close();
 
             if (airportSelection == 999) {
-                System.out.print("Sorry we couldn't find a match!");
+                System.out.print("Sorry we couldn't find a correct match!");
                 return null;
             } else {
                 System.out.println("You selected: " + possibleAirports.get(airportSelection).toString());
@@ -104,16 +114,13 @@ public class Utils {
     }
 
     // Haversine formula calculating
-    public static double getDistance(double startLat, double startLon, double endLat,
-        double endLon) {
+    public static double getDistance(double startLat, double startLon, double endLat, double endLon) {
         double dLat = Math.toRadians(endLat - startLat);
         double dLon = Math.toRadians(endLon - startLon);
         startLat = Math.toRadians(startLat);
         endLat = Math.toRadians(endLat);
 
-        double a =
-            Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(startLat)
-                * Math.cos(endLat);
+        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(startLat) * Math.cos(endLat);
         double c = 2 * Math.asin(Math.sqrt(a));
 
         // GCD correction factor accounting for distance flown in excess of the GCD including; stacking, traffic and weather-driven corrections (https://www.icao.int/environmental-protection/CarbonOffset/Documents/Methodology%20ICAO%20Carbon%20Calculator_v10-2017.pdf)
@@ -131,6 +138,9 @@ public class Utils {
         Airport startAirport = selectAirport();
         System.out.println("\nSelect your destination airport:");
         Airport endAirport = selectAirport();
-        System.out.println("\nThe distance between " + startAirport.getName() + " & " + endAirport.getName() + " is " + getDistance(startAirport.getLatitude(),  startAirport.getLongitude(), endAirport.getLatitude(),  endAirport.getLongitude()));
+        System.out.println(
+            "\nThe distance between " + startAirport.getName() + " & " + endAirport.getName()
+                + " is " + getDistance(startAirport.getLatitude(), startAirport.getLongitude(),
+                endAirport.getLatitude(), endAirport.getLongitude()) + "km.");
     }
 }
