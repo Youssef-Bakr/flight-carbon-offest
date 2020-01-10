@@ -1,8 +1,6 @@
-import java.net.URL;
-import javax.print.attribute.standard.MediaSize;
-import javax.print.attribute.standard.MediaSize.ISO;
+import java.io.Serializable;
 
-public class Airport {
+public class Airport implements Serializable {
 
     // Datasource URL: https://ourairports.com/data/airports.csv. (\N represents a null value).
     // Data Dictionary URL: https://ourairports.com/help/data-dictionary.html#airports
@@ -21,63 +19,47 @@ public class Airport {
     private String GPSCode;             // The code that an aviation GPS database (such as Jeppesen's or Garmin's) would normally use for the airport. This will always be the ICAO code if one exists. Note that, unlike the ident column, this is not guaranteed to be globally unique.
     private String iAtA;                // The three-letter IATA code for the airport (if it has one).
     private String localCode;           // The local country code for the airport, if different from the gps_code and iata_code fields (used mainly for US airports).
-    private URL homeLink;	            // http://www.heathrowairport.com/	URL of the airport's official home page on the web, if one exists.
-    private URL wikipediaLink;	        // https://en.wikipedia.org/wiki/Heathrow_Airport	URL of the airport's page on Wikipedia, if one exists.
-    private String keywords;	                // Extra keywords/phrases to assist with search, comma-separated. May include former names for the airport, alternate codes, names in other languages, nearby tourist destinations, etc.
+    private String homeLink;               // http://www.heathrowairport.com/	URL of the airport's official home page on the web, if one exists.
+    private String wikipediaLink;          // https://en.wikipedia.org/wiki/Heathrow_Airport	URL of the airport's page on Wikipedia, if one exists.
+    private String keywords;            // Extra keywords/phrases to assist with search, comma-separated. May include former names for the airport, alternate codes, names in other languages, nearby tourist destinations, etc.
+    private String combinedIdentifier;  // String combination of iAtA, name and isoCountry.
 
-    /**
-     * Airport constructor.
-     *
-     * @param airportID     Unique OpenFlights identifier for this airport.
-     * @param name          Name of airport. May or may not contain the City name.
-     * @param city          Main city served by airport. May be spelled differently from Name.
-     * @param country       Country or territory where airport is located.
-     * @param iAtA          3 Letter IATA code. Empty string if not assigned/unknown.
-     * @param iCaO          4-letter ICAO code. Empty string if not assigned.
-     * @param latitude      Decimal degrees, usually to six significant digits. Negative is South, positive is North.
-     * @param longitude     Decimal degrees, usually to six significant digits. Negative is West, positive is East.
-     * @param altitude      Altitude in feet.
-     * @param type          Type of the airport. Value "airport" for air terminals, "station" for train stations, "port" for ferry terminals and "unknown" if not known.
-     * @param source        Source of this data. "OurAirports" for data sourced from OurAirports, "Legacy" for old data not matched to OurAirports (mostly DAFIF), "User" for unverified user contributions.
-     */
-    public Airport(int airportID, String name, String city, String country, String iAtA,
-        String iCaO, double latitude, double longitude, int altitude, String type, String source) {
-        this.airportID = airportID;
-        this.ident = ident;
-        this.city = city;
-        this.country = country;
-        this.iAtA = iAtA;
-        this.iCaO = iCaO;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.altitude = altitude;
-        this.type = type;
-        this.source = source;
-        this.combinedIdentifier = iAtA + " " + name + " [" + country + ']';
+    public Airport() {
+//        this.ID = ID;
+//        this.ident = ident;
+//        this.type = type;
+//        this.name = name;
+//        this.latitude = latitude;
+//        this.longitude = longitude;
+//        this.elevation = elevation;
+//        this.continent = continent;
+//        this.isoCountry = isoCountry;
+//        this.isoRegion = isoRegion;
+//        this.municipality = municipality;
+//        this.scheduledService = scheduledService;
+//        this.GPSCode = GPSCode;
+//        this.iAtA = iAtA;
+//        this.localCode = localCode;
+//        this.homeLink = homeLink;
+//        this.wikipediaLink = wikipediaLink;
+//        this.keywords = keywords;
+//        this.combinedIdentifier = iAtA + " " + name + " [" + isoCountry + ']';
     }
 
-    public int getAirportID() {
-        return airportID;
+    public int getID() {
+        return ID;
+    }
+
+    public String getIdent() {
+        return ident;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public String getiAtA() {
-        return iAtA;
-    }
-
-    public String getiCaO() {
-        return iCaO;
     }
 
     public double getLatitude() {
@@ -88,29 +70,141 @@ public class Airport {
         return longitude;
     }
 
-    public int getAltitude() {
-        return altitude;
+    public int getElevation() {
+        return elevation;
     }
 
-    public String getType() {
-        return type;
+    public String getContinent() {
+        return continent;
     }
 
-    public String getSource() {
-        return source;
+    public String getIsoCountry() {
+        return isoCountry;
+    }
+
+    public String getIsoRegion() {
+        return isoRegion;
+    }
+
+    public String getMunicipality() {
+        return municipality;
+    }
+
+    public String getScheduledService() {
+        return scheduledService;
+    }
+
+    public String getGPSCode() {
+        return GPSCode;
+    }
+
+    public String getiAtA() {
+        return iAtA;
+    }
+
+    public String getLocalCode() {
+        return localCode;
+    }
+
+    public String getHomeLink() {
+        return homeLink;
+    }
+
+    public String getWikipediaLink() {
+        return wikipediaLink;
+    }
+
+    public String getKeywords() {
+        return keywords;
     }
 
     public String getCombinedIdentifier() {
         return combinedIdentifier;
     }
 
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void setIdent(String ident) {
+        this.ident = ident;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setElevation(int elevation) {
+        this.elevation = elevation;
+    }
+
+    public void setContinent(String continent) {
+        this.continent = continent;
+    }
+
+    public void setIsoCountry(String isoCountry) {
+        this.isoCountry = isoCountry;
+    }
+
+    public void setIsoRegion(String isoRegion) {
+        this.isoRegion = isoRegion;
+    }
+
+    public void setMunicipality(String municipality) {
+        this.municipality = municipality;
+    }
+
+    public void setScheduledService(String scheduledService) {
+        this.scheduledService = scheduledService;
+    }
+
+    public void setGPSCode(String GPSCode) {
+        this.GPSCode = GPSCode;
+    }
+
+    public void setiAtA(String iAtA) {
+        this.iAtA = iAtA;
+    }
+
+    public void setLocalCode(String localCode) {
+        this.localCode = localCode;
+    }
+
+    public void setHomeLink(String homeLink) {
+        this.homeLink = homeLink;
+    }
+
+    public void setWikipediaLink(String wikipediaLink) {
+        this.wikipediaLink = wikipediaLink;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public void setCombinedIdentifier(String combinedIdentifier) {
+        this.combinedIdentifier = combinedIdentifier;
+    }
+
     /**
      * toString method for Aircraft object.
      *
-     * @return Name, City and Country of an airport in string form.
+     * @return Name and Country of an airport in string form.
      */
     @Override
     public String toString() {
-        return "Name: " + name + ", City: " + city + ", Country: " + country + '.';
+        return "Name: " + name + ", Country: " + isoCountry + '.';
     }
 }
