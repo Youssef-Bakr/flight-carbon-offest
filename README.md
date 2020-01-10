@@ -17,7 +17,7 @@ Utilise the most up to date data from [OpenFlights](https://openflights.org/) to
 * [**Utils.java**](https://github.com/followingell/flight_carbon_offest/blob/master/src/Utils.java): Helper class with generateAirports, selectAirport and getDistance methods.
 
 ## To do:
-* Adapt data source away from [OpenFlights](https://openflights.org/) to [OurAirports](https://ourairports.com/data/) to remove licensing restrictions.
+* Adapt data source away from [OpenFlights](https://openflights.org/) to [OurAirports](https://ourairports.com/data/) to remove licensing restrictions. **(In Progress)**
 * Fix issue when no IATA code is found within selectAirport method.
 
 ## Licensing and disclaimer:

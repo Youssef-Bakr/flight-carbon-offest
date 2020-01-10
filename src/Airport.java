@@ -1,21 +1,29 @@
+import java.net.URL;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSize.ISO;
+
 public class Airport {
 
-    // Datasource URL: https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat. (\N represents a null value).
-    private int airportID;              // Unique OpenFlights identifier for this airport.
-    private String name;                // Name of airport. May or may not contain the City name.
-    private String city;                // Main city served by airport. May be spelled differently from Name.
-    private String country;             // Country or territory where airport is located.
-    private String iAtA;                // 3 Letter IATA code. Null if not assigned/unknown.
-    private String iCaO;                // 4-letter ICAO code. Null if not assigned.
-    private double latitude;            // Decimal degrees, usually to six significant digits. Negative is South, positive is North.
-    private double longitude;           // Decimal degrees, usually to six significant digits. Negative is West, positive is East.
-    private int altitude;               // Altitude in feet.
-    // private double timezone;         // Hours offset from UTC. Fractional hours are expressed as decimals, eg. India is 5.5.
-    // private String dSt;              // Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown). See also: Help: Time
-    // private String databaseTimeZone; // Database time zone. Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
-    private String type;                // Type of the airport. Value "airport" for air terminals, "station" for train stations, "port" for ferry terminals and "unknown" if not known. In airports.csv, only type=airport is included.
-    private String source;              // Source of this data. "OurAirports" for data sourced from OurAirports, "Legacy" for old data not matched to OurAirports (mostly DAFIF), "User" for unverified user contributions. In airports.csv, only source=OurAirports is included.
-    private String combinedIdentifier;  // A user friendly concatenation of iAtA + name & country variables.
+    // Datasource URL: https://ourairports.com/data/airports.csv. (\N represents a null value).
+    // Data Dictionary URL: https://ourairports.com/help/data-dictionary.html#airports
+    private int ID;                     // Internal OurAirports integer identifier for the airport.
+    private String ident;               // The text identifier used in the OurAirports URL. This will be the ICAO code if available. Otherwise, it will be a local airport code (if no conflict), or if nothing else is available, an internally-generated code starting with the ISO2 country code, followed by a dash and a four-digit number.
+    private String type;                // The type of the airport. Allowed values are "closed_airport", "heliport", "large_airport", "medium_airport", "seaplane_base", and "small_airport".
+    private String name;                // The official airport name, including "Airport", "Airstrip", etc.
+    private double latitude;            // The airport latitude in decimal degrees (positive for north).
+    private double longitude;           // The airport longitude in decimal degrees (positive for east).
+    private int elevation;              // The airport elevation MSL in feet (not metres).
+    private String continent;           // The code for the continent where the airport is (primarily) located. Allowed values are "AF" (Africa), "AN" (Antarctica), "AS" (Asia), "EU" (Europe), "NA" (North America), "OC" (Oceania), or "SA" (South America).
+    private String isoCountry;          // The two-character ISO 3166:1-alpha2 code for the country where the airport is (primarily) located. A handful of unofficial, non-ISO codes are also in use, such as "XK" for Kosovo.
+    private String isoRegion;           // An alphanumeric code for the high-level administrative subdivision of a country where the airport is primarily located (e.g. province, governorate), prefixed by the ISO2 country code and a hyphen. OurAirports uses ISO 3166:2 codes whenever possible, preferring higher administrative levels, but also includes some custom codes.
+    private String municipality;        // The primary municipality that the airport serves (when available). Note that this is not necessarily the municipality where the airport is physically located.
+    private String scheduledService;    // "yes" if the airport currently has scheduled airline service; "no" otherwise.
+    private String GPSCode;             // The code that an aviation GPS database (such as Jeppesen's or Garmin's) would normally use for the airport. This will always be the ICAO code if one exists. Note that, unlike the ident column, this is not guaranteed to be globally unique.
+    private String iAtA;                // The three-letter IATA code for the airport (if it has one).
+    private String localCode;           // The local country code for the airport, if different from the gps_code and iata_code fields (used mainly for US airports).
+    private URL homeLink;	            // http://www.heathrowairport.com/	URL of the airport's official home page on the web, if one exists.
+    private URL wikipediaLink;	        // https://en.wikipedia.org/wiki/Heathrow_Airport	URL of the airport's page on Wikipedia, if one exists.
+    private String keywords;	                // Extra keywords/phrases to assist with search, comma-separated. May include former names for the airport, alternate codes, names in other languages, nearby tourist destinations, etc.
 
     /**
      * Airport constructor.
@@ -35,7 +43,7 @@ public class Airport {
     public Airport(int airportID, String name, String city, String country, String iAtA,
         String iCaO, double latitude, double longitude, int altitude, String type, String source) {
         this.airportID = airportID;
-        this.name = name;
+        this.ident = ident;
         this.city = city;
         this.country = country;
         this.iAtA = iAtA;
