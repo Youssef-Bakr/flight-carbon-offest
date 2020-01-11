@@ -1,13 +1,15 @@
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+
+;
 
 public class Utils {
 
@@ -22,22 +24,16 @@ public class Utils {
      * @return ArrayList<Airport>
      * @throws IOException
      */
-    public static ArrayList<Airport> generateAirports() throws IOException {
-
-        CSVReader reader = new CSVReader(new FileReader("data.csv"), ',' , '"' , 1);
+    public static List<Airport> generateAirports() throws IOException {
 
         URL url = new URL("https://ourairports.com/data/airports.csv");
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-        CSVReader CSVreader = new CSVReader(br);
-        ArrayList<Airport> airports = new ArrayList<>();
-
-
-
+        List<Airport> airports = new CsvToBeanBuilder(br).withType(Airport.class).withOrderedResults(false).build().parse();
         return airports;
     }
 
     public static Airport selectAirport() throws IOException {
-        ArrayList<Airport> airports = generateAirports();
+        List<Airport> airports = generateAirports();
         ArrayList<Airport> possibleAirports = new ArrayList<>();
         String inputtedString = "";
 
@@ -83,7 +79,8 @@ public class Utils {
                 + ". When prompted please enter a valid selection number for the correct airport or if none match input 999 to end the program.");
             Collections.sort(possibleAirports, Comparator.comparing(Airport::getName));
             for (int i = 0; i < possibleAirports.size(); i++) {
-                System.out.println("Input " + i + " for: " + possibleAirports.get(i).toString());
+                System.out.printf("%-10s %-10s %-10s\n", "Input " + i + " for: ", possibleAirports.get(i).getName(), possibleAirports.get(i).getIsoCountry());
+                //System.out.println("Input " + i + " for: " + possibleAirports.get(i).toString());
             }
 
             int airportSelection;
