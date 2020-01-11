@@ -6,13 +6,13 @@ _Note: This project is currently incomplete and as such the README may be out of
 ## Description
 To accurately calculate the amount of carbon generated from a flight requires expensive and proprietary data. This project is an attempt to offer a comparable, open-source alternative.
 
-Utilise the most up to date data from [OpenFlights](https://openflights.org/) to generate the amount of carbon to be offset given an origin and destination airport pair derived from user input.
+Currently Incomplete! Utilise crowdsourced, non-proprietary data _(from [OurAirports](https://ourairports.com/))_ to generate accurate carbon-to-be-offset amounts given an origin and destination airport pair derived from user input.
 
 ### Example _(so far)_:
 ![](example.gif)
 
 ## What's included?
-* [**Airport.java**](https://github.com/followingell/flight_carbon_offest/blob/master/src/Airport.java): Class storing information related to all airports within [OpenFlight's](https://openflights.org/) database containing both getter and toString methods.
+* [**Airport.java**](https://github.com/followingell/flight_carbon_offest/blob/master/src/Airport.java): Class storing information related to all airports within [OurAirports](https://ourairports.com/) database containing getter, setter and toString methods.
 
 * [**Utils.java**](https://github.com/followingell/flight_carbon_offest/blob/master/src/Utils.java): Helper class with generateAirports, selectAirport and getDistance methods.
 
