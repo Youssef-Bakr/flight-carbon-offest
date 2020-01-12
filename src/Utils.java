@@ -32,6 +32,43 @@ public class Utils {
         return airports;
     }
 
+    public static double passengerLoadFactor(String originRegion, String destRegion) {
+
+        // If substantially similar route found within ICAO Passenger Load Factors pairs the % is used. If multiple match due to lesser granularity the avg. is used.
+        // If no pair found use average of all ICAO Passenger Load Factors https://www.icao.int/environmental-protection/CarbonOffset/Documents/Methodology%20ICAO%20Carbon%20Calculator_v10-2017.pdf
+        if ((originRegion + destRegion).equals("AFAF")) {
+            return 0.6035;
+        } else if ((originRegion + destRegion).equals("AFSA") || (originRegion + destRegion).equals("SAAF")) {
+            return 0.6020;
+        } else if ((originRegion + destRegion).equals("AFAS") || (originRegion + destRegion).equals("ASAF")) {
+            return 0.7290;
+        } else if ((originRegion + destRegion).equals("ASAS")) {
+            return 0.7605;
+        } else if ((originRegion + destRegion).equals("AFNA") || (originRegion + destRegion).equals("NAAF")) {
+            return 0.7728;
+        } else if ((originRegion + destRegion).equals("AFEU") || (originRegion + destRegion).equals("EUAF")) {
+            return 0.7739;
+        } else if ((originRegion + destRegion).equals("SASA")) {
+            return 0.7740;
+        } else if ((originRegion + destRegion).equals("NASA") || (originRegion + destRegion).equals("SANA")) {
+            return 0.7966;
+        } else if ((originRegion + destRegion).equals("ASNA") || (originRegion + destRegion).equals("NAAS")) {
+            return 0.7980;
+        } else if ((originRegion + destRegion).equals("ASEU") || (originRegion + destRegion).equals("EUAS")) {
+            return 0.8080;
+        } else if ((originRegion + destRegion).equals("EUEU")) {
+            return 0.8089;
+        } else if ((originRegion + destRegion).equals("NANA")) {
+            return 0.8178;
+        } else if ((originRegion + destRegion).equals("EUNA") || (originRegion + destRegion).equals("NAEU")) {
+            return 0.8216;
+        } else if ((originRegion + destRegion).equals("EUSA") || (originRegion + destRegion).equals("SAEU")) {
+            return 0.8220;
+        } else {
+            return 0.7672;
+        }
+    }
+
     public static Airport selectAirport() throws IOException {
         List<Airport> airports = generateAirports();
         ArrayList<Airport> possibleAirports = new ArrayList<>();
