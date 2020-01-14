@@ -28,7 +28,8 @@ public class Utils {
 
         URL url = new URL("https://ourairports.com/data/airports.csv");
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-        List<Airport> airports = new CsvToBeanBuilder(br).withType(Airport.class).withOrderedResults(false).build().parse();
+        List<Airport> airports = new CsvToBeanBuilder(br).withType(Airport.class)
+            .withOrderedResults(false).build().parse();
         return airports;
     }
 
@@ -38,31 +39,40 @@ public class Utils {
         // If no pair found use average of all ICAO Passenger Load Factors https://www.icao.int/environmental-protection/CarbonOffset/Documents/Methodology%20ICAO%20Carbon%20Calculator_v10-2017.pdf
         if ((originRegion + destRegion).equals("AFAF")) {
             return 0.6035;
-        } else if ((originRegion + destRegion).equals("AFSA") || (originRegion + destRegion).equals("SAAF")) {
+        } else if ((originRegion + destRegion).equals("AFSA") || (originRegion + destRegion)
+            .equals("SAAF")) {
             return 0.6020;
-        } else if ((originRegion + destRegion).equals("AFAS") || (originRegion + destRegion).equals("ASAF")) {
+        } else if ((originRegion + destRegion).equals("AFAS") || (originRegion + destRegion)
+            .equals("ASAF")) {
             return 0.7290;
         } else if ((originRegion + destRegion).equals("ASAS")) {
             return 0.7605;
-        } else if ((originRegion + destRegion).equals("AFNA") || (originRegion + destRegion).equals("NAAF")) {
+        } else if ((originRegion + destRegion).equals("AFNA") || (originRegion + destRegion)
+            .equals("NAAF")) {
             return 0.7728;
-        } else if ((originRegion + destRegion).equals("AFEU") || (originRegion + destRegion).equals("EUAF")) {
+        } else if ((originRegion + destRegion).equals("AFEU") || (originRegion + destRegion)
+            .equals("EUAF")) {
             return 0.7739;
         } else if ((originRegion + destRegion).equals("SASA")) {
             return 0.7740;
-        } else if ((originRegion + destRegion).equals("NASA") || (originRegion + destRegion).equals("SANA")) {
+        } else if ((originRegion + destRegion).equals("NASA") || (originRegion + destRegion)
+            .equals("SANA")) {
             return 0.7966;
-        } else if ((originRegion + destRegion).equals("ASNA") || (originRegion + destRegion).equals("NAAS")) {
+        } else if ((originRegion + destRegion).equals("ASNA") || (originRegion + destRegion)
+            .equals("NAAS")) {
             return 0.7980;
-        } else if ((originRegion + destRegion).equals("ASEU") || (originRegion + destRegion).equals("EUAS")) {
+        } else if ((originRegion + destRegion).equals("ASEU") || (originRegion + destRegion)
+            .equals("EUAS")) {
             return 0.8080;
         } else if ((originRegion + destRegion).equals("EUEU")) {
             return 0.8089;
         } else if ((originRegion + destRegion).equals("NANA")) {
             return 0.8178;
-        } else if ((originRegion + destRegion).equals("EUNA") || (originRegion + destRegion).equals("NAEU")) {
+        } else if ((originRegion + destRegion).equals("EUNA") || (originRegion + destRegion)
+            .equals("NAEU")) {
             return 0.8216;
-        } else if ((originRegion + destRegion).equals("EUSA") || (originRegion + destRegion).equals("SAEU")) {
+        } else if ((originRegion + destRegion).equals("EUSA") || (originRegion + destRegion)
+            .equals("SAEU")) {
             return 0.8220;
         } else {
             return 0.7672;
@@ -116,7 +126,8 @@ public class Utils {
                 + ". When prompted please enter a valid selection number for the correct airport or if none match input 999 to end the program.");
             Collections.sort(possibleAirports, Comparator.comparing(Airport::getName));
             for (int i = 0; i < possibleAirports.size(); i++) {
-                System.out.printf("%-10s %-10s %-10s\n", "Input " + i + " for: ", possibleAirports.get(i).getName(), possibleAirports.get(i).getIsoCountry());
+                System.out.printf("%-10s %-10s %-10s\n", "Input " + i + " for: ",
+                    possibleAirports.get(i).getName(), possibleAirports.get(i).getIsoCountry());
                 //System.out.println("Input " + i + " for: " + possibleAirports.get(i).toString());
             }
 
@@ -136,6 +147,14 @@ public class Utils {
                 return possibleAirports.get(airportSelection);
             }
         }
+    }
+
+    public static List<Route> generateRoutes() throws IOException {
+
+        URL url = new URL("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat");
+        BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+        List<Route> routes = new CsvToBeanBuilder(br).withType(Route.class).withOrderedResults(false).build().parse();
+        return routes;
     }
 
     // Haversine formula calculating
@@ -162,6 +181,7 @@ public class Utils {
     }
 
     public static void main(String[] args) throws IOException {
+        generateRoutes();
         System.out.println("Select your origin airport:");
         Airport startAirport = selectAirport();
         System.out.println("\nSelect your destination airport:");
