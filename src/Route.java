@@ -5,22 +5,22 @@ public class Route {
     @CsvBindByPosition(position = 0, required = true)
     private String iAtA;                    // Airline  2-letter (IATA) or 3-letter (ICAO) code of the airline.
 
-    @CsvBindByPosition(position = 1, required = true)
+    @CsvBindByPosition(position = 1, required = true) //, capture = "[^\\\N]") TODO
     private int airlineID;                  // Airline ID   Unique OpenFlights identifier for airline (see Airline).
 
     @CsvBindByPosition(position = 2, required = true)
     private String sourceAirportIaTa;       // Source airport   3-letter (IATA) or 4-letter (ICAO) code of the source airport.
 
-    @CsvBindByPosition(position = 3, required = true)
+    @CsvBindByPosition(position = 3, required = true) //, capture = "[^\\\N]") TODO
     private int sourceAirportID;            // Source airport ID    Unique OpenFlights identifier for source airport (see Airport)
 
     @CsvBindByPosition(position = 4, required = true)
     private String destinationAirportIaTa;  // Destination airport  3-letter (IATA) or 4-letter (ICAO) code of the destination airport.
 
-    @CsvBindByPosition(position = 5, required = true)
+    @CsvBindByPosition(position = 5, required = true) //, capture = "[^\\\N]") TODO
     private int destinationAirportID;       // Destination airport  ID	Unique OpenFlights identifier for destination airport (see Airport)
 
-    @CsvBindByPosition(position = 6, required = true)
+    @CsvBindByPosition(position = 6)
     private String codeshare;               // Codeshare    "Y" if this flight is a codeshare (that is, not operated by Airline, but another carrier), empty otherwise.
 
     @CsvBindByPosition(position = 7, required = true)
@@ -32,7 +32,7 @@ public class Route {
     public Route() {
     }
 
-    public String getiAtA() {
+    public String getIaTa() {
         return iAtA;
     }
 

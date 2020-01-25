@@ -14,7 +14,22 @@ import java.util.Scanner;
 public class Utils {
 
     // mean earth radius (in KM) as defined by the International Union of Geodesy and Geophysics
-    public static final double EARTH_RADIUS = 6371.0087714150598;
+    private static final double EARTH_RADIUS = 6371.0087714150598;
+    private static final double AVG_SEAT_NUMBER_GSH = 153.51;
+    private static final double AVG_SEAT_NUMBER_GLH = 280.21;
+    private static final double PASSENGER_LOAD_FACTOR = 0.82;
+    private static final double ONE_MINUS_CARGO_FACTOR_GSH = 0.93;
+    private static final double ONE_MINUS_CARGO_FACTOR_GLH = 0.74;
+    private static final double ECONOMY_CLASS_CLASS_WEIGHTING_FACTOR_GSH = 0.96;
+    private static final double ECONOMY_CLASS_CLASS_WEIGHTING_FACTOR_GLH = 0.80;
+    private static final double BUSINESS_CLASS_CLASS_WEIGHTING_FACTOR_GSH = 1.26;
+    private static final double BUSINESS_CLASS_CLASS_WEIGHTING_FACTOR_GLH = 1.54;
+    private static final double FIRST_CLASS_CLASS_WEIGHTING_FACTOR = 2.40;
+    private static final double EMISSION_FACTOR = 3.15;
+    private static final double PREPRODUCTION = 0.54;
+    private static final int MULTIPLIER = 2;
+    private static final double AIRCRAFTFACTOR = 0.00038;
+    private static final double AIRCRAFT_AND_AIRPORT_INFRA_EMISSIONS = 11.68;
 
     /**
      * Utilises OurAirports data to create an ArrayList containing information related to each
@@ -149,14 +164,6 @@ public class Utils {
         }
     }
 
-    public static List<Route> generateRoutes() throws IOException {
-
-        URL url = new URL("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat");
-        BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-        List<Route> routes = new CsvToBeanBuilder(br).withType(Route.class).withOrderedResults(false).build().parse();
-        return routes;
-    }
-
     // Haversine formula calculating
     public static double getDistance(double startLat, double startLon, double endLat,
         double endLon) {
@@ -181,7 +188,6 @@ public class Utils {
     }
 
     public static void main(String[] args) throws IOException {
-        generateRoutes();
         System.out.println("Select your origin airport:");
         Airport startAirport = selectAirport();
         System.out.println("\nSelect your destination airport:");
