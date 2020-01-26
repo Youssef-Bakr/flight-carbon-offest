@@ -29,7 +29,6 @@ public class Utils {
     private static final double PREPRODUCTION = 0.54;
     private static final int MULTIPLIER = 2;
     private static final double AIRCRAFTFACTOR = 0.00038;
-    private static final double AIRCRAFT_AND_AIRPORT_INFRA_EMISSIONS = 11.68;
 
     /**
      * Utilises OurAirports data to create an ArrayList containing information related to each
@@ -46,52 +45,6 @@ public class Utils {
         List<Airport> airports = new CsvToBeanBuilder(br).withType(Airport.class)
             .withOrderedResults(false).build().parse();
         return airports;
-    }
-
-    public static double passengerLoadFactor(String originRegion, String destRegion) {
-
-        // If substantially similar route found within ICAO Passenger Load Factors pairs the % is used. If multiple match due to lesser granularity the avg. is used.
-        // If no pair found use average of all ICAO Passenger Load Factors https://www.icao.int/environmental-protection/CarbonOffset/Documents/Methodology%20ICAO%20Carbon%20Calculator_v10-2017.pdf
-        if ((originRegion + destRegion).equals("AFAF")) {
-            return 0.6035;
-        } else if ((originRegion + destRegion).equals("AFSA") || (originRegion + destRegion)
-            .equals("SAAF")) {
-            return 0.6020;
-        } else if ((originRegion + destRegion).equals("AFAS") || (originRegion + destRegion)
-            .equals("ASAF")) {
-            return 0.7290;
-        } else if ((originRegion + destRegion).equals("ASAS")) {
-            return 0.7605;
-        } else if ((originRegion + destRegion).equals("AFNA") || (originRegion + destRegion)
-            .equals("NAAF")) {
-            return 0.7728;
-        } else if ((originRegion + destRegion).equals("AFEU") || (originRegion + destRegion)
-            .equals("EUAF")) {
-            return 0.7739;
-        } else if ((originRegion + destRegion).equals("SASA")) {
-            return 0.7740;
-        } else if ((originRegion + destRegion).equals("NASA") || (originRegion + destRegion)
-            .equals("SANA")) {
-            return 0.7966;
-        } else if ((originRegion + destRegion).equals("ASNA") || (originRegion + destRegion)
-            .equals("NAAS")) {
-            return 0.7980;
-        } else if ((originRegion + destRegion).equals("ASEU") || (originRegion + destRegion)
-            .equals("EUAS")) {
-            return 0.8080;
-        } else if ((originRegion + destRegion).equals("EUEU")) {
-            return 0.8089;
-        } else if ((originRegion + destRegion).equals("NANA")) {
-            return 0.8178;
-        } else if ((originRegion + destRegion).equals("EUNA") || (originRegion + destRegion)
-            .equals("NAEU")) {
-            return 0.8216;
-        } else if ((originRegion + destRegion).equals("EUSA") || (originRegion + destRegion)
-            .equals("SAEU")) {
-            return 0.8220;
-        } else {
-            return 0.7672;
-        }
     }
 
     public static Airport selectAirport() throws IOException {
@@ -165,8 +118,8 @@ public class Utils {
     }
 
     // Haversine formula calculating
-    public static double getDistance(double startLat, double startLon, double endLat,
-        double endLon) {
+    public static double getDistance(double startLat, double startLon, double endLat, double endLon,
+        boolean oneWay) {
         double dLat = Math.toRadians(endLat - startLat);
         double dLon = Math.toRadians(endLon - startLon);
         startLat = Math.toRadians(startLat);
@@ -177,25 +130,62 @@ public class Utils {
                 * Math.cos(endLat);
         double c = 2 * Math.asin(Math.sqrt(a));
 
-        // GCD correction factor accounting for distance flown in excess of the GCD including; stacking, traffic and weather-driven corrections (https://www.icao.int/environmental-protection/CarbonOffset/Documents/Methodology%20ICAO%20Carbon%20Calculator_v10-2017.pdf)
-        if (EARTH_RADIUS * c < 550) {
-            return (EARTH_RADIUS * c) + 50;
-        } else if (EARTH_RADIUS * c >= 550 && EARTH_RADIUS * c <= 5500) {
-            return (EARTH_RADIUS * c) + 100;
+        // EN 16258: 95km adjustment for each flight.
+        if (oneWay) {
+            return (EARTH_RADIUS * c) + 95;
         } else {
-            return (EARTH_RADIUS * c) + 125;
+            return (((EARTH_RADIUS * c) + 95) * 2);
         }
     }
 
+    public static boolean shortHaul(double distanceInKM) {
+        if ((distanceInKM % 1500) < (distanceInKM % 2500)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static double seatClassToClassWeightingFactor(int seatClass, boolean sH) {
+        if (seatClass == 0 && sH) {
+            return ECONOMY_CLASS_CLASS_WEIGHTING_FACTOR_GSH;
+        } else if (seatClass == 0) {
+            return ECONOMY_CLASS_CLASS_WEIGHTING_FACTOR_GLH;
+        } else if (seatClass == 1 && sH) {
+            return BUSINESS_CLASS_CLASS_WEIGHTING_FACTOR_GSH;
+        } else if (seatClass == 1) {
+            return BUSINESS_CLASS_CLASS_WEIGHTING_FACTOR_GLH;
+        } else if (seatClass == 2) {
+            return FIRST_CLASS_CLASS_WEIGHTING_FACTOR;
+        } else {
+            return ECONOMY_CLASS_CLASS_WEIGHTING_FACTOR_GLH;
+        }
+    }
+
+    public static double calculateCO2Emissions(Airport originAirport, Airport destinationAirport,
+        int seatClass, boolean oneWay) {
+
+        double distanceInKM = getDistance(originAirport.getLatitude(), originAirport.getLongitude(),
+            destinationAirport.getLatitude(), destinationAirport.getLongitude(), oneWay);
+
+        boolean sH = shortHaul(distanceInKM);
+        double cwf = seatClassToClassWeightingFactor(seatClass, sH);
+
+        if (sH) {
+            return (distanceInKM / (AVG_SEAT_NUMBER_GSH * PASSENGER_LOAD_FACTOR)) * (ONE_MINUS_CARGO_FACTOR_GSH) * cwf * (EMISSION_FACTOR * MULTIPLIER + PREPRODUCTION) + AIRCRAFTFACTOR * distanceInKM;
+        } else {
+            return (distanceInKM / (AVG_SEAT_NUMBER_GLH * PASSENGER_LOAD_FACTOR)) * (ONE_MINUS_CARGO_FACTOR_GLH) * cwf * (EMISSION_FACTOR * MULTIPLIER + PREPRODUCTION) + AIRCRAFTFACTOR * distanceInKM;
+        }
+    }
+
+    // (1368.7496415733044 / (153.51 * 0.82)) * (0.93) * 0.96 * (0.54 * 2 + 0.54) + 0.00038 * 1368.7496415733044 + 11.68
+
     public static void main(String[] args) throws IOException {
         System.out.println("Select your origin airport:");
-        Airport startAirport = selectAirport();
+        Airport originAirport = selectAirport();
         System.out.println("\nSelect your destination airport:");
-        Airport endAirport = selectAirport();
-        System.out.println(
-            "\nThe distance between " + startAirport.getName() + " & " + endAirport.getName()
-                + " is " + (int) getDistance(startAirport.getLatitude(),
-                startAirport.getLongitude(),
-                endAirport.getLatitude(), endAirport.getLongitude()) + "km.");
+        Airport destinationAirport = selectAirport();
+        System.out.println(getDistance(originAirport.getLatitude(), originAirport.getLongitude(), destinationAirport.getLatitude(), destinationAirport.getLongitude(), true));
+        System.out.println(calculateCO2Emissions(originAirport, destinationAirport, 0, true));
     }
 }
