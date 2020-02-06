@@ -19,3 +19,4 @@ Currently Incomplete! Utilise crowdsourced, non-proprietary data _(from [OurAirp
 ## To do:
 * ~Adapt data source away from [OpenFlights](https://openflights.org/) to [OurAirports](https://ourairports.com/data/) to remove licensing restrictions.~ _(Completed: 11th Jan 2020)_
 * Fix issue when no IATA code is found within selectAirport method.
+* Implement comparable for Airport class to enable sorted ArrayList and therefore reduce search time.
